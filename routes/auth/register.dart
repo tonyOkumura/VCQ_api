@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
-import 'package:vka_api/src/models/user_auth_model.dart';
 import 'package:vka_api/src/repositories/users_repository.dart';
+import 'package:vcq_models/models.dart';
 
 Future<Response> onRequest(RequestContext context) async {
   switch (context.request.method) {
@@ -16,18 +16,23 @@ Future<Response> onRequest(RequestContext context) async {
 
 Future<Response> _post(RequestContext context) async {
   final usersRepository = context.read<UsersRepository>();
+
   try {
+    // Читаем тело запроса и парсим JSON
     final body = await context.request.body();
     final Map<String, dynamic> jsonData = jsonDecode(body);
-    final userAuth = UserAuth.fromJson(jsonData);
-    final token =
-        await usersRepository.loginUser(userAuth.email, userAuth.password);
+
+    // Создаём объект User на основе полученных данных
+    final user = User.fromJson(jsonData);
+
+    // Создаём пользователя в базе данных
+    final createdUser = await usersRepository.createUser(user);
 
     return Response.json(
       body: {
-        'token': token,
+        'token': createdUser,
       },
-      statusCode: HttpStatus.accepted,
+      statusCode: HttpStatus.created,
     );
   } catch (err) {
     return Response.json(
