@@ -17,7 +17,7 @@ class MessageRepository {
     try {
       final messages = await dbClient
           .from('messages')
-          .select<PostgrestList>()
+          .select()
           .eq('chat_room_id', chatRoomId);
 
       return messages;

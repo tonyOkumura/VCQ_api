@@ -7,10 +7,16 @@ environment:
   sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
-  dart_frog: ^1.0.0
+  dart_frog: ^1.1.0
   dart_frog_web_socket: ^1.0.0
-  envied: ^0.5.4+1
-  supabase: ^1.11.11
+  envied: ^0.5.4
+  supabase: ^2.5.0
+  vcq_models:
+         git:
+           url: https://github.com/tonyOkumura/VCQ_models.git
+           ref: c788b23
+ 
+
 
 dev_dependencies:
   mocktail: ^1.0.0

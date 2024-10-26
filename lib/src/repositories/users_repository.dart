@@ -1,4 +1,8 @@
+import 'dart:math';
+
 import 'package:supabase/supabase.dart';
+
+import 'package:vcq_models/models.dart' as vcqModels;
 
 class UsersRepository {
   final SupabaseClient dbClient;
@@ -19,6 +23,20 @@ class UsersRepository {
       // В случае ошибки возвращаем пустой список
       print('Что-то пошло не так: $err');
       return [];
+    }
+  }
+
+  Future<String> createUser(vcqModels.User user) async {
+    try {
+      // Выполняем запрос на создание пользователя
+      await dbClient.from('users').insert(user.toJson());
+
+      final token = Random().nextInt(100).toString();
+      return token;
+    } catch (err) {
+      // В случае ошибки возвращаем пустой Map
+      print('Что-то пошло не так: $err');
+      return '';
     }
   }
 }
