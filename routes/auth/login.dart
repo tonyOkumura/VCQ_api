@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
-import 'package:vka_api/src/models/user_auth_model.dart';
-import 'package:vka_api/src/repositories/users_repository.dart';
+import 'package:vcq_models/models.dart';
+import 'package:vka_api/src/repositories/auth_repository.dart';
 
 Future<Response> onRequest(RequestContext context) async {
   switch (context.request.method) {
@@ -15,13 +15,13 @@ Future<Response> onRequest(RequestContext context) async {
 }
 
 Future<Response> _post(RequestContext context) async {
-  final usersRepository = context.read<UsersRepository>();
+  final authRepository = context.read<AuthRepository>();
   try {
     final body = await context.request.body();
     final Map<String, dynamic> jsonData = jsonDecode(body);
-    final userAuth = UserAuth.fromJson(jsonData);
-    final token =
-        await usersRepository.loginUser(userAuth.email, userAuth.password);
+    final userAuth = UserLogin.fromJson(jsonData);
+    final token = await authRepository.loginUser(
+        userAuth.username, userAuth.password_hash);
 
     return Response.json(
       body: {

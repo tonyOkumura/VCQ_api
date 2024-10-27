@@ -17,7 +17,7 @@ dependencies:
   vcq_models:
     git:
       url: https://github.com/tonyOkumura/VCQ_models.git
-      ref: c788b23
+      ref: 99a1d31
 
 dev_dependencies:
   build_runner: ^2.4.13

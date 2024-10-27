@@ -16,7 +16,6 @@ Future<Response> _get(RequestContext context) async {
   final usersRepository = context.read<UsersRepository>();
 
   try {
-    // Используем await, чтобы получить данные из getAllUsers, которые не Future, а List<Map<String, dynamic>>
     final users = await usersRepository.getAllUsers();
 
     return Response.json(
