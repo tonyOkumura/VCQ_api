@@ -28,7 +28,7 @@ class AuthRepository {
     try {
       final response = await dbClient
           .from("users_auth")
-          .select()
+          .select("id")
           .eq('username', username)
           .eq('password_hash', password);
       if (response.isEmpty) {
@@ -37,7 +37,7 @@ class AuthRepository {
         final jwt = JWT(
           {
             'username': username,
-            'password_hash': password,
+            'id': response[0]['id'],
           },
         );
 
