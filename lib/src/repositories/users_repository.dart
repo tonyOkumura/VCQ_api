@@ -38,4 +38,21 @@ class UsersRepository {
       return '';
     }
   }
+
+  Future<Map<String, dynamic>> findUserById(
+    String id,
+  ) async {
+    try {
+      // Выполняем запрос на получение пользователя по id
+      final response =
+          await dbClient.from('users').select().eq('id', id).single();
+      print(response);
+
+      return response.cast<String, dynamic>();
+    } catch (err) {
+      // В случае ошибки возвращаем пустой Map
+      print('Что-то пошло не так: $err');
+      return {};
+    }
+  }
 }
