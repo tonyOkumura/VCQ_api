@@ -53,6 +53,7 @@ Future<Response> _post(RequestContext context) async {
     );
 
     return Response(
+      body: jsonEncode(chatRoom.toJson()),
       statusCode: HttpStatus.created,
     );
   } catch (err) {

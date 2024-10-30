@@ -8,80 +8,81 @@ class ChatroomRepository {
 
   Future<List<Map<String, dynamic>>> getAllChatRooms() async {
     try {
-      // Выполняем запрос на получение всех пользователей
       final List<dynamic> response = await dbClient.from('chat_rooms').select();
-
-      final chatrooms = response.cast<Map<String, dynamic>>();
-
-      return chatrooms;
+      return response.cast<Map<String, dynamic>>();
     } catch (err) {
-      // В случае ошибки возвращаем пустой список
-      print('Что-то пошло не так: $err');
+      print('Error retrieving chat rooms: $err');
       return [];
     }
   }
 
-  Future<List<dynamic>> getParticipantsByChatRoomID(
-    String chatRoomID,
-  ) async {
+  Future<List<dynamic>> getParticipantsByChatRoomID(String chatRoomID) async {
     try {
-      // Выполняем запрос на получение всех пользователей
       final response = await dbClient
           .from('chat_rooms_id')
           .select('participant_id')
           .eq('chat_room_id', chatRoomID);
-
-      final participantIds =
-          response.map((item) => item['participant_id']).toList();
-
-      print(participantIds);
-
-      return participantIds;
+      return response.map((item) => item['participant_id']).toList();
     } catch (err) {
-      // В случае ошибки возвращаем пустой список
-      print('Что-то пошло не так: $err');
+      print('Error retrieving participants: $err');
       return [];
     }
   }
 
   Future<List<dynamic>> getChatRoomsByParticipantID(
-    String participantID,
-  ) async {
+      String participantID) async {
     try {
-      // Выполняем запрос на получение всех пользователей
       final response = await dbClient
           .from('chat_rooms_id')
           .select('chat_room_id')
           .eq('participant_id', participantID);
-
-      final chatRoomIds = response.map((item) => item['chat_room_id']).toList();
-
-      print(chatRoomIds);
-
-      return chatRoomIds;
+      return response.map((item) => item['chat_room_id']).toList();
     } catch (err) {
-      // В случае ошибки возвращаем пустой список
-      print('Что-то пошло не так: $err');
+      print('Error retrieving chat rooms by participant ID: $err');
       return [];
     }
   }
 
-  createChatRoom(
-    ChatRoom chatRoom,
-  ) async {
+  Future<ChatRoom?> createChatRoom(ChatRoom chatRoom) async {
     try {
-      await dbClient.from('chat_rooms').insert({
-        'id': chatRoom.id,
-      });
+      final List<String> participantIds =
+          chatRoom.participants.map((p) => p.id).toList();
 
-      chatRoom.participants.forEach((p) async {
+      // Получаем все комнаты для первого участника
+      final firstParticipantChatRooms =
+          await getChatRoomsByParticipantID(participantIds[0]);
+
+      // Проверяем, содержат ли остальные участники хотя бы одну общую комнату
+      bool roomExists = true;
+      for (var i = 1; i < participantIds.length; i++) {
+        final participantChatRooms =
+            await getChatRoomsByParticipantID(participantIds[i]);
+        roomExists = roomExists &&
+            firstParticipantChatRooms.any(participantChatRooms.contains);
+
+        if (!roomExists) break;
+      }
+
+      if (roomExists) {
+        print('Chat room already exists with these participants');
+        return chatRoom;
+      }
+
+      // Если комната не найдена, создаем новую
+      await dbClient.from('chat_rooms').insert({'id': chatRoom.id});
+
+      for (final participant in chatRoom.participants) {
         await dbClient.from('chat_rooms_id').insert({
           'chat_room_id': chatRoom.id,
-          'participant_id': p.id,
+          'participant_id': participant.id,
         });
-      });
+      }
+
+      print('Chat room created successfully');
+      return chatRoom;
     } catch (err) {
-      print('Что-то пошло не так: $err');
+      print('Error creating chat room: $err');
+      return null;
     }
   }
 }
