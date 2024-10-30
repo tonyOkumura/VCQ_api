@@ -45,18 +45,18 @@ class ChatroomRepository {
 
   Future<ChatRoom?> createChatRoom(ChatRoom chatRoom) async {
     try {
-      final List<String> participantIds =
+      final List<String?> participantIds =
           chatRoom.participants.map((p) => p.id).toList();
 
       // Получаем все комнаты для первого участника
       final firstParticipantChatRooms =
-          await getChatRoomsByParticipantID(participantIds[0]);
+          await getChatRoomsByParticipantID(participantIds[0]!);
 
       // Проверяем, содержат ли остальные участники хотя бы одну общую комнату
       bool roomExists = true;
       for (var i = 1; i < participantIds.length; i++) {
         final participantChatRooms =
-            await getChatRoomsByParticipantID(participantIds[i]);
+            await getChatRoomsByParticipantID(participantIds[i]!);
         roomExists = roomExists &&
             firstParticipantChatRooms.any(participantChatRooms.contains);
 

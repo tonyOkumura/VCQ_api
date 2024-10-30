@@ -26,7 +26,7 @@ class UsersRepository {
   Future<String> updateUser(vcqModels.User user) async {
     try {
       // Выполняем запрос на обновление пользователя
-      await dbClient.from('users').update(user.toJson()).eq('id', user.id);
+      await dbClient.from('users').update(user.toJson()).eq('id', user.id!);
 
       final token = Random().nextInt(100).toString();
       return token;

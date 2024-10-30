@@ -6,7 +6,7 @@ Handler middleware(Handler handler) {
   return handler
       .use(bearerAuthentication<String>(authenticator: (context, token) async {
     final authRepository = context.read<AuthRepository>();
-    final email = authRepository.verifyToken(token);
-    return email;
+    final username = authRepository.verifyToken(token);
+    return username;
   }));
 }
