@@ -1,6 +1,4 @@
 import 'dart:math';
-
-import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:supabase/supabase.dart';
 import 'package:vcq_models/models.dart' as vcqModels;
 

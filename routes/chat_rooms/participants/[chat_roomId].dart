@@ -1,9 +1,6 @@
 import 'dart:io';
-
 import 'package:dart_frog/dart_frog.dart';
-import 'package:vcq_models/models.dart';
 import 'package:vka_api/src/repositories/chatroom_repository.dart';
-import 'package:vka_api/src/repositories/users_repository.dart';
 
 Future<Response> onRequest(
   RequestContext context,
