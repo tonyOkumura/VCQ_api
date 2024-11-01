@@ -28,7 +28,6 @@ Future<Response> _post(RequestContext context) async {
     );
   } catch (err) {
     return Response.json(
-      body: {'error': err.toString()},
       statusCode: HttpStatus.internalServerError,
     );
   }

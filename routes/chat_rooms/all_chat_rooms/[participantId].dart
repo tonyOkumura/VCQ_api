@@ -19,11 +19,10 @@ Future<Response> onRequest(
 Future<Response> _get(RequestContext context, String id) async {
   final chatRoomsRepository = context.read<ChatroomRepository>();
   try {
-    final chatRoomIds =
-        await chatRoomsRepository.getChatRoomsByParticipantID(id);
+    final chatRooms = await chatRoomsRepository.getChatRoomsByParticipantID(id);
 
     return Response.json(
-      body: chatRoomIds,
+      body: chatRooms,
       statusCode: HttpStatus.accepted,
     );
   } catch (err) {

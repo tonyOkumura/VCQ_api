@@ -23,6 +23,13 @@ Future<Response> _post(RequestContext context) async {
     final token = await authRepository.loginUser(
         userAuth.username, userAuth.password_hash);
 
+    if (token.isEmpty) {
+      return Response.json(
+        body: {'error': 'Invalid username or password'},
+        statusCode: HttpStatus.unauthorized,
+      );
+    }
+
     return Response.json(
       body: {
         'token': token,

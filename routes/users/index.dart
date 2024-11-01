@@ -18,6 +18,13 @@ Future<Response> _get(RequestContext context) async {
   try {
     final users = await usersRepository.getAllUsers();
 
+    if (users.isEmpty) {
+      return Response.json(
+        body: {'error': 'No users found'},
+        statusCode: HttpStatus.notFound,
+      );
+    }
+
     return Response.json(
       body: users,
       statusCode: HttpStatus.ok,

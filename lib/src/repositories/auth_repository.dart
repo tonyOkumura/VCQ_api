@@ -18,9 +18,7 @@ class AuthRepository {
       );
       await dbClient.from('users').insert(user.toJson());
     } catch (err) {
-      // В случае ошибки возвращаем пустой Map
-      print('Что-то пошло не так: $err');
-      return null;
+      print('Что-то пошло не так при создании пользователя: $err');
     }
   }
 
@@ -47,7 +45,7 @@ class AuthRepository {
         return token;
       }
     } catch (err) {
-      print('Что-то пошло не так: $err');
+      print('Что-то пошло не так при авторизации пользователя: $err');
       return '';
     }
   }
@@ -58,9 +56,7 @@ class AuthRepository {
       SecretKey('tokumura'),
     );
     final payloadData = payload.payload as Map<String, dynamic>;
-
-    final username = payloadData['username'] as String;
-
-    return username;
+    final id = payloadData['id'] as String;
+    return id;
   }
 }

@@ -21,6 +21,12 @@ Future<Response> _get(RequestContext context, String id) async {
   final usersRepository = context.read<UsersRepository>();
   try {
     final usermap = await usersRepository.findUserById(id);
+    if (usermap.isEmpty) {
+      return Response.json(
+        body: {'error': 'User not found'},
+        statusCode: HttpStatus.notFound,
+      );
+    }
     final user = User.fromJson(usermap);
 
     return Response.json(
