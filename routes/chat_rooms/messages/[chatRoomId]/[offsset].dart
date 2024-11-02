@@ -3,23 +3,27 @@ import 'dart:io';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:vka_api/src/repositories/message_repository.dart';
 
-Response onRequest(
-  RequestContext context,
-  String chatRoomId,
-) {
+Future<Response> onRequest(
+    RequestContext context, String chatRoomId, String offset) async {
   switch (context.request.method) {
     case HttpMethod.get:
-      return _get(context, chatRoomId);
+      return await _get(context, chatRoomId, int.parse(offset));
     default:
       return Response(statusCode: HttpStatus.methodNotAllowed);
   }
 }
 
-Response _get(RequestContext context, String chatRoomId) {
+Future<Response> _get(
+    RequestContext context, String chatRoomId, int offset) async {
   final messageRepository = context.read<MessageRepository>();
 
   try {
-    final messages = messageRepository.fetchMessages(chatRoomId);
+    final messages = await messageRepository.fetchMessagesWithPagination(
+      chatRoomId: chatRoomId,
+      limit: 20,
+      offset: offset,
+    );
+
     return Response.json(
       body: messages,
       statusCode: HttpStatus.accepted,
