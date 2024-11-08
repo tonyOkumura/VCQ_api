@@ -20,13 +20,13 @@ class MessageRepository {
 
       final createdMessage = Message.fromJson(response);
 
-      // Обновляем "последнее сообщение" в таблице chat_rooms для данной комнаты
-      // await dbClient.from('chat_rooms').update({
-      //   'last_message_id': createdMessage.id,
-      //   'created_at': createdMessage.createdAt != null
-      //       ? createdMessage.createdAt?.toIso8601String()
-      //       : DateTime.now().toIso8601String(),
-      // }).eq('id', message.chatRoomId);
+      //Обновляем "последнее сообщение" в таблице chat_rooms для данной комнаты
+      await dbClient.from('chat_rooms').update({
+        'last_message_id': createdMessage.id,
+        'created_at': createdMessage.createdAt != null
+            ? createdMessage.createdAt?.toIso8601String()
+            : DateTime.now().toIso8601String(),
+      }).eq('id', message.chatRoomId);
 
       return createdMessage;
     } catch (err) {
