@@ -6,11 +6,31 @@ class MessageRepository {
 
   const MessageRepository({required this.dbClient});
 
-  Future<Map<String, dynamic>> createMessage(Message message) async {
+  Future<Message> createMessage(Message message) async {
     try {
-      return await dbClient.from('messages').insert(message.toJson());
+      // Сохраняем сообщение в базе данных
+      final newMessage = message.copyWith(
+        createdAt: DateTime.now(),
+      );
+      final response = await dbClient
+          .from('messages')
+          .insert(newMessage.toJson())
+          .select()
+          .single();
+
+      final createdMessage = Message.fromJson(response);
+
+      // Обновляем "последнее сообщение" в таблице chat_rooms для данной комнаты
+      // await dbClient.from('chat_rooms').update({
+      //   'last_message_id': createdMessage.id,
+      //   'created_at': createdMessage.createdAt != null
+      //       ? createdMessage.createdAt?.toIso8601String()
+      //       : DateTime.now().toIso8601String(),
+      // }).eq('id', message.chatRoomId);
+
+      return createdMessage;
     } catch (err) {
-      throw Exception(err);
+      throw Exception('Failed to create and set last message: $err');
     }
   }
 

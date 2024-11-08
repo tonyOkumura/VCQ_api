@@ -40,4 +40,14 @@ class UsersRepository {
       return {};
     }
   }
+
+  Future<void> updateUserStatus(String userId, {required bool isOnline}) async {
+    try {
+      await dbClient
+          .from('users')
+          .update({'is_online': isOnline}).eq('id', userId);
+    } catch (error) {
+      print('Error updating user status: $error');
+    }
+  }
 }

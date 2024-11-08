@@ -23,7 +23,8 @@ Future<HttpServer> run(Handler handler, InternetAddress ip, int port) {
   messageRepository = MessageRepository(dbClient: dbClient);
   usersRepository = UsersRepository(dbClient: dbClient);
   authRepository = AuthRepository(dbClient: dbClient);
-  chatroomRepository = ChatroomRepository(dbClient: dbClient);
+  chatroomRepository = ChatroomRepository(
+      dbClient: dbClient, messageRepository: messageRepository);
 
   return serve(handler, ip, port);
 }

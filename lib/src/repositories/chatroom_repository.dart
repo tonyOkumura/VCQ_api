@@ -2,11 +2,16 @@ import 'package:supabase/supabase.dart' as supabase;
 import 'package:vcq_models/models.dart';
 import 'package:vcq_models/src/chat_room.dart';
 import 'package:vka_api/src/repositories/users_repository.dart';
+import 'package:vka_api/src/repositories/message_repository.dart';
 
 class ChatroomRepository {
   final supabase.SupabaseClient dbClient;
+  final MessageRepository messageRepository;
 
-  const ChatroomRepository({required this.dbClient});
+  ChatroomRepository({
+    required this.dbClient,
+    required this.messageRepository,
+  });
 
   Future<List<Map<String, dynamic>>> _getAllChatRooms() async {
     try {
@@ -108,7 +113,7 @@ class ChatroomRepository {
     }
   }
 
-  _getChatRoomById({
+  Future<ChatRoom?> _getChatRoomById({
     required String chatRoomId,
   }) async {
     ChatRoom? chatRoom;
@@ -127,11 +132,20 @@ class ChatroomRepository {
     }
 
     try {
+      final lastMessages = await messageRepository.fetchMessagesWithPagination(
+        chatRoomId: chatRoomId,
+        limit: 1,
+        offset: 0,
+      );
+      final lastMessage = lastMessages.isNotEmpty ? lastMessages.first : null;
+
+      // Создаем объект ChatRoom с последним сообщением
       chatRoom = ChatRoom(
         id: chatRoomId,
         participants: participants,
-        // lastMessage: null,
-        // unreadCount: 0,
+        lastMessage: lastMessage,
+        unreadCount:
+            0, // Значение для количества непрочитанных сообщений можно добавить позже
       );
     } catch (err) {
       print('Error retrieving chat room: $err');
